@@ -1,0 +1,77 @@
+---
+layout: default
+---
+<article class="post">
+
+	<header class="post-header">
+		<h1 class="post-title">{{ page.title | escape }}</h1>
+	</header>
+
+	<div class="post-content">
+		{{ content }}
+	</div>
+
+	{%- assign pageuri = page.url | remove: '/index.html' -%}
+	{%- for collection in site.collections -%}
+		{%- if collection.label == page.collection -%}
+			<h2>Categories</h2>
+			<div class="category">
+				{%- for subpage in collection.docs -%}
+					{%- assign subpageuri =  subpage.url | remove: pageuri -%}
+					{%- if subpageuri != "/index.html" -%}
+						{%- assign subpageuri = subpageuri | remove: '/index.html' -%}
+						{%- assign pagedepth = subpageuri | split: '/' | size -%}
+						{%- if pagedepth == 2 -%}
+							<article class="category-card">
+								<div class="category-card-div" itemscope itemtype="http://schema.org/CreativeWork">
+									<a href="{{ subpage.url | relative_url }}" rel="permalink">
+									{% if subpage.banner %}
+										<img class="category-card-banner" src="{{subpage.banner}}"></img>
+									{% endif %}
+									<div class="category-card-title">{{subpage.title}}</div>
+									</a>
+								</div>
+							</article>
+						{% endif %}
+					{% endif %}
+				{%- endfor -%}
+			</div>
+			<h2>Timeline</h2>
+			<div class="timeline">
+				{%- assign posts_by_yearmonth = collection.docs | group_by_exp:"post", "post.date | date: '%Y %b'" -%}
+				{%- assign date_format = site.minima.date_format | default: "%b %-d" -%}
+				{%- for year_month in posts_by_yearmonth -%}
+					{%- if year_month.name -%}
+						<h3>{{ year_month.name }}</h3>
+						<div class="grid">
+							{%- for post in year_month.items -%}
+								{%- if post.url contains pageuri -%}
+									{%- if post.url contains "post" -%}
+										<article class="grid-card">
+											<div class="grid-card-div" itemscope itemtype="http://schema.org/CreativeWork">                  
+												{% if post.linkto %}
+													<a href="{{ post.linkto }}">
+												{% else %}
+													<a href="{{ post.url | relative_url }}" rel="permalink">
+												{% endif %}
+												{% if post.images %}
+													<img class="grid-card-banner" src="{{post.images[0]}}"></img>
+												{% else %}
+													<img class="grid-card-banner" src="{{post.banner}}"></img>
+												{% endif %}
+												<div class="grid-card-meta"><i>#{{ post.collection | capitalize }}</i></div>
+												<div class="grid-card-title">{{post.title}}</div>
+												<div class="grid-card-meta"><i>{{ post.date | date: date_format }}</i></div>
+												</a>
+											</div>
+										</article>
+									{% endif %}
+								{% endif %}
+							{%- endfor -%}
+						</div>
+					{% endif %}
+				{%- endfor -%}
+			</div>
+		{% endif %}
+	{%- endfor -%}
+</article>

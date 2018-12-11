@@ -1,0 +1,44 @@
+---
+layout: default
+---
+<article class="post">
+
+	<header class="post-header">
+		<h1 class="post-title">{{ page.title | escape }}</h1>
+	</header>
+
+	<div class="post-content">
+		{{ content }}
+
+		<h2>Gallery</h2>
+		<div class="gallery">
+			{%- assign pageuri = page.url | remove: '/index.html' -%}
+			{%- for collection in site.collections -%}
+				{%- if collection.label == page.collection -%}
+					{%- for post in collection.docs -%}
+						{%- if post.url contains pageuri -%}
+							{%- if post.url contains "post" -%}
+								<article class="gallery-card">
+									<div class="gallery-card-div" itemscope itemtype="http://schema.org/CreativeWork">                  
+										{% if post.linkto %}
+											<a href="{{ post.linkto }}">
+										{% else %}
+											<a href="{{ post.url | relative_url }}" rel="permalink">
+										{% endif %}
+										{% if post.images %}
+											<img class="gallery-card-banner" src="{{post.images[0]}}"></img>
+										{% else %}
+											<img class="gallery-card-banner" src="{{post.banner}}"></img>
+										{% endif %}
+										</a>
+									</div>
+									<div class="gallery-card-title">{{post.title}}</div>
+								</article>
+							{% endif %}
+						{% endif %}
+					{%- endfor -%}
+				{% endif %}
+			{%- endfor -%}
+		</div>
+	</div>
+</article>

@@ -1,0 +1,43 @@
+---
+layout: default
+---
+<article class="post">
+
+	<header class="post-header">
+		<h1 class="post-title">{{ page.title | escape }}</h1>
+	</header>
+
+	<div class="post-content">
+		{{ content }}
+
+		<h2>Posts</h2>
+		<div class="archive">
+			{%- assign pageuri = page.url | remove: '/index.html' -%}
+			{%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+			{%- for collection in site.collections -%}
+				{%- if collection.label == page.collection -%}
+					{%- assign posts = collection.docs | sort: 'date' | reverse -%}
+					{%- for post in posts -%}
+						{%- if post.url contains pageuri -%}
+							{%- if post.url contains "post" -%}
+							<article class="archive-item">
+								<div class="archive-item-div" itemscope itemtype="http://schema.org/CreativeWork">                  
+									{% if post.linkto %}
+										<a href="{{ post.linkto }}">
+									{% else %}
+										<a href="{{ post.url | relative_url }}" rel="permalink">
+									{% endif %}
+									<div class="archive-item-title">{{post.title}}</div>
+									<div class="archive-item-meta">{{ post.date | date: date_format }}</div>
+									<div class="archive-item-description">{{ post.excerpt }}</div>
+									</a>
+								</div>
+							</article>
+							{% endif %}
+						{% endif %}
+					{%- endfor -%}
+				{% endif %}
+			{%- endfor -%}
+		</div>
+	</div>
+</article>
